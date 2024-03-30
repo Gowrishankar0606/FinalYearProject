@@ -14,7 +14,7 @@ const Bloodrequest = () => {
     e.preventDefault();
     
     console.log('Blood Request submitted:', formdata);
-    
+    const res=await apiregisterdonor(formdata)
     if(res.status=='Sucessfully Sumitted'){
     setformdata({})
     toast.success("Sucessfully Sumitted the Blood Request")
