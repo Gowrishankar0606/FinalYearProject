@@ -1,13 +1,16 @@
 
 const Home = () => {
   return (
-    <div>
-      <h1>Home Page</h1>
-      <p>Web pages are a foundational type of 
-        content because they serve as the building blocks of websites.
-         Common types of web and landing pages include homepages, 
-         about pages, contact pages, and landing pages – all of which 
-         are considered content because they convey information to readers.</p>
+    <div className="max-w-full w-full mx-auto">
+    <div className="py-20 flex justify-center items-center text-center">
+      <h1 className=" text-5xl font-bold text-green-500 pt-5">REAL TIME LOCATION BASED BLOOD DONOR FINDER USING MERN STACK</h1>
+    </div>
+    <div className="text-center font-bold text-2xl pt-30 text-blue-700">
+    <h2 className="text-red-600 pb-5 text-3xl" >Done By:</h2>
+        <h4>Gowri Shankar P</h4>
+        <h4>Mohandass V</h4>
+        <h4>Liser Arokiyaraj</h4>
+    </div>
     </div>
   )
 }

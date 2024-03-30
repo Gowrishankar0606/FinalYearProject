@@ -1,53 +1,43 @@
 import React, { useState } from 'react';
-
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { getalladdress } from '../../services/apiaddress/apiaddress';
 
 const Bloodrequest = () => {
-  const [fullName, setFullName] = useState('');
-  
-  const [email, setEmail] = useState('');
-  const [phoneNo, setPhoneNo] = useState('');
-  const [bloodGroup, setBloodGroup] = useState('');
-  const [bloodLocation, setBloodLocation] = useState({
-    district: '',
-    city: '',
-    taluk: '',
-    town: '',
-  });
-  const [hospitalName, setHospitalName] = useState('');
-
-  const handleFullNameChange = (e) => {
-    setFullName(e.target.value);
-  };
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePhoneNoChange = (e) => {
-    setPhoneNo(e.target.value);
-  };
-
-  const handleBloodGroupChange = (e) => {
-    setBloodGroup(e.target.value);
-  };
-
-  const handleBloodLocationChange = (e) => {
-    const { name, value } = e.target;
-    setBloodLocation((prevLocation) => ({
-      ...prevLocation,
-      [name]: value,
-    }));
-  };
-
-  const handleHospitalNameChange = (e) => {
-    setHospitalName(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
+  const navigate=useNavigate()
+  const [formdata,setformdata]=useState({})
+  const [selectdata,setselectdata]=useState({})
+  const onchange=(e)=>{
+   setformdata({...formdata,[e.target.name]:e.target.value})
+  }
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // Add your registration logic here
-    console.log('Registration submitted:', { fullName, email, phoneNo, bloodGroup, bloodLocation, hospitalName });
+    
+    console.log('Blood Request submitted:', formdata);
+    
+    if(res.status=='Sucessfully Sumitted'){
+    setformdata({})
+    toast.success("Sucessfully Sumitted the Blood Request")
+    navigate('/Profile')
+    }
+    else{
+      toast.error(res.status)
+    }
   };
-
+  const getaddress=async(e)=>{
+    console.log(e.target.value)
+    const res= await getalladdress()
+    const dis=res.filter(res=>res.District==e.target.value)
+    setselectdata({...selectdata,"taluk":dis.map(res=>res.Taluk_Name)})
+ 
+   }
+   const getvillage=async(e)=>{
+     console.log(e.target.value)
+     const res= await getalladdress()
+     const dis=res.filter(res=>res.Taluk_Name==e.target.value)
+     setselectdata({...selectdata,"village":dis[0].Villages})
+  
+    }
   return (
     <div className="flex justify-center items-center min-h-screen  pt-20 pb-10">
       <form onSubmit={handleSubmit} className="bg-gray-100 text-black-900 shadow-md rounded px-8 pt-6 pb-8 mb-4  h-85  sm:w-2/5 md:w-1/2 lg:w-1/3 xl:w-2/5">
@@ -63,8 +53,8 @@ const Bloodrequest = () => {
             id="fullName"
             type="text"
             placeholder="Full Name"
-            value={fullName}
-            onChange={handleFullNameChange}
+           name='Name'
+            onChange={onchange}
             required
           />
         </div>
@@ -77,8 +67,8 @@ const Bloodrequest = () => {
             id="email"
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={handleEmailChange}
+            name='email'
+            onChange={onchange}
             required
           />
         </div>
@@ -91,8 +81,8 @@ const Bloodrequest = () => {
             id="phoneNo"
             type="tel"
             placeholder="Phone Number"
-            value={phoneNo}
-            onChange={handlePhoneNoChange}
+            name='phonenumber'
+            onChange={onchange}
             required
           />
         </div>
@@ -103,8 +93,8 @@ const Bloodrequest = () => {
           <select
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="bloodGroup"
-            value={bloodGroup}
-            onChange={handleBloodGroupChange}
+            name='bloodgroup'
+            onChange={onchange}
             required
           >
             <option value="">Select Blood Group</option>
@@ -125,55 +115,50 @@ const Bloodrequest = () => {
           <div className="grid grid-cols-2 gap-4">
             <select
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              name="district"
-              value={bloodLocation.district}
-              onChange={handleBloodLocationChange}
+              name="state"
+              onChange={onchange}
               required
             >
-              <option value="">Select District</option>
-              <option value="District 1">District 1</option>
-              <option value="District 2">District 2</option>
-              <option value="District 3">District 3</option>
+              <option value="">Select State</option>
+              <option value="District 1">Tamil Nadu</option>
+              
               {/* Add more options as needed */}
             </select>
             <select
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              name="city"
+              name="district"
               value={bloodLocation.city}
-              onChange={handleBloodLocationChange}
+              onChange={(e)=>{onchange(e);getaddress(e)}}
               required
             >
-              <option value="">Select City</option>
-              <option value="City 1">City 1</option>
-              <option value="City 2">City 2</option>
-              <option value="City 3">City 3</option>
+              <option value="">Select District</option>
+              <option value="City 1">Cuddlore</option>
+              
               {/* Add more options as needed */}
             </select>
             <select
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               name="taluk"
               value={bloodLocation.taluk}
-              onChange={handleBloodLocationChange}
+              onChange={(e)=>{onchange(e);getvillage(e)}}
               required
             >
               <option value="">Select Taluk</option>
-              <option value="Taluk 1">Taluk 1</option>
-              <option value="Taluk 2">Taluk 2</option>
-              <option value="Taluk 3">Taluk 3</option>
-              {/* Add more options as needed */}
+              {selectdata?.taluk?.map((data,index)=>
+              <option key={index}>{data}</option>
+              )}
             </select>
             <select
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              name="town"
-              value={bloodLocation.town}
-              onChange={handleBloodLocationChange}
+              name="Village"
+              
+              onChange={onchange}
               required
             >
-              <option value="">Select Town</option>
-              <option value="Town 1">Town 1</option>
-              <option value="Town 2">Town 2</option>
-              <option value="Town 3">Town 3</option>
-              {/* Add more options as needed */}
+              <option value="">Select Village</option>
+              {selectdata?.village?.map((data,index)=>
+              <option key={index}>{data}</option>
+              )}
             </select>
           </div>
         </div>
@@ -186,8 +171,8 @@ const Bloodrequest = () => {
             id="hospitalName"
             type="text"
             placeholder="Hospital Name"
-            value={hospitalName}
-            onChange={handleHospitalNameChange}
+            name='Hospitalname'
+            onChange={onchange}
             required
           />
         </div>

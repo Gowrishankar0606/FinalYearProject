@@ -1,0 +1,34 @@
+[
+    {
+        "District":"Cuddalore",
+        "Taluk_Name":"Chidambaram",
+        "Villages":[
+            "Adanur (Bhuvanagiri)",
+            "Agaranallur"
+        ]
+    },
+    {
+        "District":"Cuddalore",
+        "Taluk_Name":"Virudhachalam",
+        "Villages":[
+            "A. Marur",
+            "Adiyur"
+        ]
+    },
+    {
+        "District":"Cuddalore",
+        "Taluk_Name":"Cuddlore",
+        "Villages":[
+            "Melakuppam",
+            "Nallathur",
+            "Thookkanampakkam",
+            "Thennam Pakkam",
+            "Keezhkumaramangalam",
+            "Odalapattu",
+            "Pudhukkadai",
+            "Singirikudi",
+            "Mathalapattu",
+            "Nakappanur"
+        ]
+    }
+]

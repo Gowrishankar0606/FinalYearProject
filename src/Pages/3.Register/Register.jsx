@@ -1,55 +1,45 @@
 import React, { useState } from 'react';
+import { getalladdress } from '../../services/apiaddress/apiaddress';
+import { apiregisterdonor } from '../../services/apidonors/apidonors';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 
 const RegisterForm = () => {
-  const [fullName, setFullName] = useState('');
-  const [dob, setDOB] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNo, setPhoneNo] = useState('');
-  const [bloodGroup, setBloodGroup] = useState('');
-  const [bloodLocation, setBloodLocation] = useState({
-    district: '',
-    city: '',
-    taluk: '',
-    town: '',
-  });
-  const [hospitalName, setHospitalName] = useState('');
-
-  const handleFullNameChange = (e) => {
-    setFullName(e.target.value);
-  };
-  const handleDOBChange = (e) => {
-      setDOB(e.target.value);
-  };
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePhoneNoChange = (e) => {
-    setPhoneNo(e.target.value);
-  };
-
-  const handleBloodGroupChange = (e) => {
-    setBloodGroup(e.target.value);
-  };
-
-  const handleBloodLocationChange = (e) => {
-    const { name, value } = e.target;
-    setBloodLocation((prevLocation) => ({
-      ...prevLocation,
-      [name]: value,
-    }));
-  };
-
-  const handleHospitalNameChange = (e) => {
-    setHospitalName(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
+  const navigate=useNavigate()
+  const [formdata,setformdata]=useState({})
+  const [selectdata,setselectdata]=useState({})
+  const onchange=(e)=>{
+   setformdata({...formdata,[e.target.name]:e.target.value})
+  }
+  const handleSubmit = async(e) => {
     e.preventDefault();
     // Add your registration logic here
-    console.log('Registration submitted:', { fullName, email, phoneNo, bloodGroup, bloodLocation, hospitalName });
+    console.log('Registration submitted:', formdata);
+    const res=await apiregisterdonor(formdata)
+    if(res.status=='Sucessfully registered'){
+    setformdata({})
+    toast.success("Sucessfully registered")
+    navigate('/login')
+    }
+    else{
+      toast.error(res.status)
+    }
   };
+  const getaddress=async(e)=>{
+   console.log(e.target.value)
+   const res= await getalladdress()
+   const dis=res.filter(res=>res.District==e.target.value)
+   setselectdata({...selectdata,"taluk":dis.map(res=>res.Taluk_Name)})
+
+  }
+  const getvillage=async(e)=>{
+    console.log(e.target.value)
+    const res= await getalladdress()
+    const dis=res.filter(res=>res.Taluk_Name==e.target.value)
+    setselectdata({...selectdata,"village":dis[0].Villages})
+ 
+   }
 
   return (
     <div className="flex justify-center items-center min-h-screen  pt-20 pb-10">
@@ -66,8 +56,8 @@ const RegisterForm = () => {
             id="fullName"
             type="text"
             placeholder="Full Name"
-            value={fullName}
-            onChange={handleFullNameChange}
+           name="fullname"
+            onChange={onchange}
             required
           />
         </div>
@@ -79,8 +69,8 @@ const RegisterForm = () => {
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="dob"
             type="date"
-            value={dob}
-            onChange={handleDOBChange}
+            name='dob'
+            onChange={onchange}
             required
           />
         </div>
@@ -93,8 +83,8 @@ const RegisterForm = () => {
             id="email"
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={handleEmailChange}
+            name='email'
+            onChange={onchange}
             required
           />
         </div>
@@ -105,10 +95,10 @@ const RegisterForm = () => {
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="phoneNo"
-            type="tel"
+            type="number"
             placeholder="Phone Number"
-            value={phoneNo}
-            onChange={handlePhoneNoChange}
+            name='phonenumber'
+            onChange={onchange}
             required
           />
         </div>
@@ -119,8 +109,8 @@ const RegisterForm = () => {
           <select
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="bloodGroup"
-            value={bloodGroup}
-            onChange={handleBloodGroupChange}
+            name="bloodgroup"
+            onChange={onchange}
             required
           >
             <option value="">Select Blood Group</option>
@@ -139,57 +129,52 @@ const RegisterForm = () => {
             Address
           </label>
           <div className="grid grid-cols-2 gap-4">
+          <select
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              name="state"
+             
+              onChange={onchange}
+              required
+            >
+              <option value="">Select State</option>
+              <option>Tamil Nadu</option>
+              
+            </select>
             <select
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               name="district"
-              value={bloodLocation.district}
-              onChange={handleBloodLocationChange}
+             
+              onChange={(e)=>{onchange(e);getaddress(e)}}
               required
             >
               <option value="">Select District</option>
-              <option value="District 1">District 1</option>
-              <option value="District 2">District 2</option>
-              <option value="District 3">District 3</option>
-              {/* Add more options as needed */}
+              <option>Cuddalore</option>
+              
             </select>
-            <select
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              name="city"
-              value={bloodLocation.city}
-              onChange={handleBloodLocationChange}
-              required
-            >
-              <option value="">Select City</option>
-              <option value="City 1">City 1</option>
-              <option value="City 2">City 2</option>
-              <option value="City 3">City 3</option>
-              {/* Add more options as needed */}
-            </select>
+        
             <select
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               name="taluk"
-              value={bloodLocation.taluk}
-              onChange={handleBloodLocationChange}
+              
+             onChange={(e)=>{onchange(e);getvillage(e)}}
               required
             >
               <option value="">Select Taluk</option>
-              <option value="Taluk 1">Taluk 1</option>
-              <option value="Taluk 2">Taluk 2</option>
-              <option value="Taluk 3">Taluk 3</option>
-              {/* Add more options as needed */}
+             {selectdata?.taluk?.map((data,index)=>
+              <option key={index}>{data}</option>
+              )}
             </select>
             <select
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              name="town"
-              value={bloodLocation.town}
-              onChange={handleBloodLocationChange}
+              name="Village"
+           
+              onChange={onchange}
               required
             >
-              <option value="">Select Town</option>
-              <option value="Town 1">Town 1</option>
-              <option value="Town 2">Town 2</option>
-              <option value="Town 3">Town 3</option>
-              {/* Add more options as needed */}
+              <option value="">Select Village</option>
+              {selectdata?.village?.map((data,index)=>
+              <option key={index}>{data}</option>
+              )}
             </select>
           </div>
         </div>
